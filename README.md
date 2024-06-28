@@ -1,8 +1,8 @@
-## Genetic Algorithm to improve the reliability of PUFS 
+### Genetic Algorithm to improve the reliability of PUFS 
 
-In this code, a genetic algorithm is used to improve the reliability of PUFs. The parameters are:
+In this code, a genetic algorithm is used to improve the reliability of PUFs. To illustrate the operation, an RTN-based PUF is simulated. The parameters are:
 
-n_gen          # Number of generations
+# n_gen: Number of generations
 
 mutation_rate  # Mutation rate
 
