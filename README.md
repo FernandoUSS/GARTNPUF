@@ -1,4 +1,4 @@
-Genetic Algorithm to improve the reliability of PUFS 
+## Genetic Algorithm to improve the reliability of PUFS 
 
 In this code, a genetic algorithm is used to improve the reliability of PUFs. The parameters are:
 
