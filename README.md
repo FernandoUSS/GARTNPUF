@@ -30,17 +30,17 @@ In this code, a genetic algorithm is used to improve the reliability of PUFs. To
 
 #### t_MCF_adp: t_MCF adaptation according to temperature
 
-stopping_crit  # Stopping criteria
+#### stopping_crit: Stopping criteria
 
-stop_limit     # Stop limit
+#### stop_limit: Stop limit
 
-k_b            # Boltzmann constant to adapt to temperature
+#### k_b: Boltzmann constant to adapt to temperature
 
-Ea_adp         # Mean activation energy to adapt to temperature
+#### Ea_adp: Mean activation energy to adapt to temperature
 
-fitness        # Fitness function (NSP or Rel)
+#### fitness: Fitness function (NSP or Rel)
 
-P              # Probability value for the NSP fitness function
+#### P: Probability value for the NSP fitness function
 
 ## Installation
 
@@ -51,7 +51,7 @@ To run the Python scripts in this repository using Conda, follow these steps:
 First, clone this repository to your local machine using `git`:
 
 ```bash
-git clone https://github.com/FernandoUSS/.git
+git clone https://github.com/FernandoUSS/GARTNPUF.git
 ```
 
 ### 2. Navigate to the Repository
@@ -59,7 +59,7 @@ git clone https://github.com/FernandoUSS/.git
 Navigate into the cloned repository directory:
 
 ```bash
-cd trng_rtn
+cd GARTNPUF
 ```
 
 ### 3. Create, Install Required Packages, and Activate Conda Environment
@@ -74,10 +74,10 @@ conda activate myenv
 You can now run the Python script. For example, to run smacd24_DMCF_viewer.py, use the following command:
 
 ```bash
-python -m plots.smacd24_DMCF_viewer
+python -m OptimizationAlgorithm.py
 ```
 
-Replace `smacd24_DMCF_viewer` with the name of your Python script. Ensure that you are in the root directory of the repository when running the command.
+Replace `OptimizationAlgorithm` with the name of your Python script. Ensure that you are in the root directory of the repository when running the command.
 
 ## Code Sections
 
