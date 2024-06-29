@@ -97,7 +97,7 @@ def ParejasEval(parejas,parejas_eval,n_meas,P,fitness):
         prob = np.array([P])
     NSP = np.zeros((n_imp,len(prob)))
     Rel = np.zeros((n_imp,len(prob)))
-    P_mean = np.zeros(n_imp)
+    Rel_all = np.zeros(n_imp)
     pairs_eval = np.zeros((n_pairs,2))
     lista = np.concatenate((np.array(range(1,int(2*n_pairs))),[0]))
     aux = np.cumsum(lista[::-1])
@@ -114,16 +114,16 @@ def ParejasEval(parejas,parejas_eval,n_meas,P,fitness):
             stable_pairs = pairs_eval[:, 1] >= P_0
             NSP[imp,k] = np.sum(stable_pairs)
             Rel[imp,k] = np.mean(pairs_eval[stable_pairs,1])
-        P_mean[imp] = np.mean(pairs_eval[:,1])
+        Rel_all[imp] = np.mean(pairs_eval[:,1])
     if P != False:
         NSP = NSP.reshape(n_imp,)
     if fitness == 'NSP':
         fitness =  NSP
-    elif fitness == 'Rel':
-        fitness =  Rel
+    elif fitness == 'Rel_all':
+        fitness =  Rel_all
     else:
         raise ValueError("Not a valid fitness function")
-    return fitness,NSP,Rel,P_mean,prob
+    return fitness,NSP,Rel,Rel_all,prob
 
 def Average(NSP,Rel,P_mean):
     NSP_mean = np.mean(NSP,axis = 0)
@@ -253,7 +253,7 @@ n_offspring = pob_size      # Number of children
 n_runs = 1                  # Runs of the algorithm 
 t_MCF_20 = 1                # t_MCF selected for 20ºC
 t_meas_20 = 2e-3            # Aperture of data
-T = [-20,0,20,40,60,80]               # Temperatures
+T = [-20,0,20,40,60,80]     # Temperatures
 n_ttos = 392                # Number of transistors
 n_pairs = int(n_ttos/2)     # Number of pairs
 n_meas_T = 100              # Number of MCF measurement per temperature
@@ -264,7 +264,7 @@ stopping_crit = True        # Stopping criteria
 stop_limit = 10             # Stop limit
 k_b = 8.617315e-5           # Boltzmann constant to adapt with temperature
 Ea_adp = 0.7                # Mean activation energy to adapt with temperature
-fitness = 'Rel'             # Fitness function (NSP or Rel)
+fitness = 'Rel_all'         # Fitness function (NSP or Rel_all)
 P = 1                       # Probability value for the NSP fitness function
 
 def main():
@@ -337,4 +337,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
