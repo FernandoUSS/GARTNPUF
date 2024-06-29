@@ -4,31 +4,31 @@ In this code, a genetic algorithm is used to improve the reliability of PUFs. To
 
 #### n_gen: Number of generations
 
-mutation_rate  # Mutation rate
+#### mutation_rate: Mutation rate
 
-pob_size       # Poblation size
+#### pob_size: Poblation size
 
-n_offspring    # Number of children 
+#### n_offspring: Number of children 
 
-n_runs         # Runs of the algorithm 
+#### n_runs: Runs of the algorithm 
 
-t_MCF_20       # t_MCF selected for 20ºC
+#### t_MCF_20: t_MCF selected for 20ºC
 
-t_meas_20      # Aperture of data
+#### t_meas_20: Aperture of data
 
-T              # Temperatures
+#### T: Temperatures considered in the optimization
 
-n_ttos         # Number of transistors
+#### n_ttos: Number of transistors
 
-n_pairs        # Number of pairs
+#### n_pairs: Number of pairs
 
-n_meas_T       # Number of MCF measurements per temperature
+#### n_meas_T: Number of MCF measurements per temperature
 
-n_meas         # Number of MCF measurements for all temperatures
+#### n_meas: Number of MCF measurements for all temperatures
 
-comp_offset    # Comparator offset
+#### comp_offset: Comparator offset
 
-t_MCF_adp      # t_MCF adaptation according to temperature
+#### t_MCF_adp: t_MCF adaptation according to temperature
 
 stopping_crit  # Stopping criteria
 
