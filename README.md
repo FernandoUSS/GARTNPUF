@@ -74,7 +74,7 @@ conda activate myenv
 You can now run the Python script. For example, to run smacd24_DMCF_viewer.py, use the following command:
 
 ```bash
-python -m OptimizationAlgorithm.py
+python -u OptimizationAlgorithm.py
 ```
 
 Replace `OptimizationAlgorithm` with the name of your Python script. Ensure that you are in the root directory of the repository when running the command.
