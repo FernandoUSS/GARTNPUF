@@ -3,10 +3,15 @@ This script is used to run the optimization-based bit selection technique for th
 """
 
 import numpy as np
-from scipy.special import comb
-import time
-import os
-import random
-from OptimizationAlgorithm import main
+import matplotlib.pyplot as plt
+from optimization_algorithm.OptimizationAlgorithm import OptAlg
+from evaluation.EvalOpt import Eval
+from simulation.SimLib import Sim
+from simulation.SimLib import DefGen
+from plot.PlotsLib import FigureElipse
 
-main()
+#Sim()
+OptAlg()
+#Eval()
+
+

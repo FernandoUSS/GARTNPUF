@@ -1,46 +1,6 @@
 # Genetic Algorithm to improve the reliability of PUFs 
 
-In this code, a genetic algorithm is used to improve the reliability of PUFs. To illustrate the operation, an RTN-based PUF is considered.  The parameters are:
-
-#### n_gen: Number of generations
-
-#### mutation_rate: Mutation rate
-
-#### pob_size: Poblation size
-
-#### n_offspring: Number of children 
-
-#### n_runs: Runs of the algorithm 
-
-#### t_MCF_20: t_MCF selected for 20ºC
-
-#### t_meas_20: Aperture of data
-
-#### T: Temperatures considered in the optimization
-
-#### n_ttos: Number of transistors
-
-#### n_pairs: Number of pairs
-
-#### n_meas_T: Number of MCF measurements per temperature
-
-#### n_meas: Number of MCF measurements for all temperatures
-
-#### comp_offset: Comparator offset
-
-#### t_MCF_adp: t_MCF adaptation according to temperature
-
-#### stopping_crit: Stopping criteria
-
-#### stop_limit: Stop limit
-
-#### k_b: Boltzmann constant to adapt to temperature
-
-#### Ea_adp: Mean activation energy to adapt to temperature
-
-#### fitness: Fitness function (NSP or Rel)
-
-#### P: Probability value for the NSP fitness function
+In this code, a genetic algorithm is used to improve the reliability of PUFs. To illustrate the operation, an RTN-based PUF is considered.
 
 ## Installation
 

@@ -1,0 +1,13 @@
+# Ignorar datos
+data/
+simulation/data
+evaluation/results
+optimization_algorithm/no_opt_results
+optimization_algorithm/opt_results
+
+# Ignorar logs
+logs/
+
+# Ignorar archivos temporales
+*.log
+*.tmp
