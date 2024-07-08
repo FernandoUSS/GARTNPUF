@@ -1,5 +1,5 @@
 """
-This script run the optimization-based bit selection technique for the RTN-based PUF
+In this script the optimization-based bit selection technique for the RTN-based PUF is coded
 """
 
 import numpy as np
