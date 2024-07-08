@@ -7,6 +7,7 @@ from scipy.special import comb
 import time
 import os
 import random
+import configparser
 
 def CalculoMCF(input_file,t_MCF,t_meas,n_meas,n_ttos):
     """ This function evaluates the MCF of the transistors """
@@ -245,27 +246,33 @@ def Mutation(offspring,mutation_rate):
             mutated_children[l,[tto1-1,tto2-1]] = mutated_children[l,[tto2-1,tto1-1]]
     return mutated_children
 
-# Parameters of the algorithm
-n_gen = 100                 # Number of generations
-mutation_rate = 0.01        # Mutation rate
-pob_size = 1000             # Poblation size
-n_offspring = pob_size      # Number of children 
-n_runs = 1                  # Runs of the algorithm 
-t_MCF_20 = 1                # t_MCF selected for 20ºC
-t_meas_20 = 2e-3            # Aperture of data
-T = [-20,0,20,40,60,80]     # Temperatures
-n_ttos = 392                # Number of transistors
-n_pairs = int(n_ttos/2)     # Number of pairs
-n_meas_T = 100              # Number of MCF measurement per temperature
-n_meas = n_meas_T*len(T)    # Number of MCF measurement for all temperatures
-comp_offset = 0             # Comparator offset
-t_MCF_adp = False           # t_MCF adaptation according to temperature
-stopping_crit = True        # Stopping criteria
-stop_limit = 10             # Stop limit
-k_b = 8.617315e-5           # Boltzmann constant to adapt with temperature
-Ea_adp = 0.7                # Mean activation energy to adapt with temperature
-fitness = 'Rel_all'         # Fitness function (NSP or Rel_all)
-P = 1                       # Probability value for the NSP fitness function
+def read_config(filename='config.ini'):
+    config = configparser.ConfigParser()
+    config.read(filename)
+    return config
+
+# Load of Parameters of the algorithm
+config = read_config()
+n_gen = config.get('settings', 'n_gen')
+mutation_rate = config.get('settings', 'mutation_rate')
+pob_size = config.getint('settings', 'pob_size')
+n_offspring = config.get('settings', 'n_offspring')
+n_runs = config.get('settings', 'n_runs')
+t_MCF_20 = config.getint('settings', 't_MCF_20')
+t_meas_20 = config.get('settings', 't_meas_20')
+T = config.get('settings', 'T')
+n_ttos = config.getint('settings', 'n_ttos')
+n_pairs = config.get('settings', 'n_pairs')
+n_meas_T = config.get('settings', 'n_meas_T')
+n_meas = config.getint('settings', 'n_meas')
+comp_offset = config.getint('settings', 'comp_offset')
+t_MCF_adp = config.get('settings', 't_MCF_adp')
+stopping_crit = config.get('settings', 'stopping_crit')
+stop_limit = config.getint('settings', 'stop_limit')
+k_b = config.get('settings', 'k_b')
+Ea_adp = config.get('settings', 'Ea_adp')
+fitness = config.get('settings', 'fitness')
+P = config.get('settings', 'P')
 
 def main():
     os.chdir('C:\\Users\\Usuario\\Desktop\\Bit Selection')
