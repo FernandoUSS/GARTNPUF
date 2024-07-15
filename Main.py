@@ -6,11 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from optimization_algorithm.OptimizationAlgorithm import OptAlg
 from evaluation.EvalOpt import Eval
-from simulation.SimLib import Sim
-from simulation.SimLib import DefGen
 from plot.PlotsLib import FigureElipse
 
-#Sim()
 OptAlg()
 #Eval()
 
