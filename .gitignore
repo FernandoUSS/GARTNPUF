@@ -2,8 +2,11 @@
 data
 simulation
 evaluation/results
+evaluation/__pycache__
+optimization/__pycache__
 optimization_algorithm/no_opt_results
 optimization_algorithm/opt_results
+__pycache__
 
 # Ignorar logs
 logs/
