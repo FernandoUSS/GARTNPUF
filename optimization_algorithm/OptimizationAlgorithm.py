@@ -33,7 +33,7 @@ def CalculoMCF(input_file,t_MCF,t_meas,n_meas,n_ttos):
                     I_max = I
                 elif I < I_min:
                     I_min = I 
-            MCF[tran,meas] = I_max - I_min
+            MCF[tran,meas] = float(I_max) - float(I_min)
     return MCF
 
 def Comparison(MCF,n_meas,n_ttos,comp_offset):
@@ -360,10 +360,10 @@ def OptAlg():
     # Calculation of the MCF
     MCF_allT = np.empty((n_ttos,0))
     for i in range(len(T)):
-        if data_type == 'exp':
-            input_file_T = 'data/experimental/data_' + str(T[i]) +'.txt'
-        elif data_type == 'sim':
-            input_file_T = 'simulation/data/data_simulated_' + str(T[i])
+        if data_type == 1:
+            input_file_T = 'data/data_set_1/data_' + str(T[i]) +'.txt'
+        elif data_type == 2:
+            input_file_T = 'data/data_set_2/data_2_' + str(T[i])
         else:
             raise ValueError("Select an appropiate data_type: exp or sim")
         if t_MCF_adp == True:
@@ -397,12 +397,12 @@ def OptAlg():
         population = RandomPairsGen(pob_size,n_pairs,n_ttos)
 
         # Save the initial population as a file
-        if data_type == 'exp':
+        if data_type == 1:
             population_file =  'optimization_algorithm//no_opt_results//experimental//initial_population_'+ fitness + '_run_' + str(run)
-        elif data_type == 'sim':
+        elif data_type == 2:
             population_file =  'optimization_algorithm//no_opt_results//simulated//initial_population_'+ fitness + '_run_' + str(run)
         else:
-            raise ValueError("Select an appropiate data_type: exp or sim")
+            raise ValueError("Select an appropiate data_type: 1 or 2")
         np.savetxt(population_file, population, delimiter=",")
 
         # Evaluation of the initial population
@@ -448,12 +448,12 @@ def OptAlg():
         print("The run of the optimization took " +  str(fin - inicio) + " seconds")
         
         # Save optimized population as a file
-        if data_type == 'exp':
+        if data_type == 1:
             population_file =  'optimization_algorithm//opt_results//experimental//population_optimized_'+ fitness + '_run_' + str(run)
-        elif data_type == 'sim':
+        elif data_type == 2:
             population_file =  'optimization_algorithm//opt_results//simulated//population_optimized_'+ fitness + '_run_' + str(run)
         else:
-            raise ValueError("Select an appropiate data_type: exp or sim")
+            raise ValueError("Select an appropiate data_type: 1 or 2")
         np.savetxt(population_file, population, delimiter=",")
 
 #if __name__ == "__main__":
