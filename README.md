@@ -31,20 +31,20 @@ conda activate myenv
 ```
 
 ### 4. Run the Script
-You can now run the Python script. For example, to run smacd24_DMCF_viewer.py, use the following command:
+You can now run the Python script. For example, to run Main.py, use the following command:
 
 ```bash
-python -u OptimizationAlgorithm.py
+python -u Main.py
 ```
 
-Replace `OptimizationAlgorithm` with the name of your Python script. Ensure that you are in the root directory of the repository when running the command.
+Replace `Main.py` with the name of your Python script. Ensure that you are in the root directory of the repository when running the command.
 
 ## Code Sections
 
 - `/data`: Contains data files used in to analize or plot
-- `/lib`: Contains common functionalities library codes
+- `/optimization_algorithm`: Contains the code with the optimization algorithm and the file configGA.ini to choose the parameters
 - `/plot`: Contains scripts for plotting data
-- `/tests`: Contains unit test files
+- `/evaluation`: Contain a script to evaluate the results from the optimization algorithm
 
 ## Contributing
 
