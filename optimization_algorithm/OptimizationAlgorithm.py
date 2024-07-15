@@ -365,7 +365,7 @@ def OptAlg():
         elif data_type == 2:
             input_file_T = 'data/data_set_2/data_2_' + str(T[i])
         else:
-            raise ValueError("Select an appropiate data_type: exp or sim")
+            raise ValueError("Select an appropiate data_type: 1 or 2")
         if t_MCF_adp == True:
             t_MCF = t_MCF_20*np.exp(Ea_adp/k_b*(1/T[i] - 1/T[2]))
             t_meas = t_meas_20*np.exp(Ea_adp/k_b*(1/T[i] - 1/T[2]))
