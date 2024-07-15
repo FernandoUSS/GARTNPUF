@@ -155,14 +155,14 @@ def Average_HW(NSP,Rel,P_mean,prob,HW,GR):
     return NSP_mean,NSP_max,NSP_min,NSP_std,Rel_mean,Rel_std,P_mean,HW_mean,HDinter
 
 def AverageRun(n_runs,data_type,opt,fitness):
-    if (data_type == 'exp') & (opt == False):
-        data_file =  'experimental//Rel_no_optimized_'+ fitness
-    elif (data_type == 'sim') & (opt == False):
-        data_file =  'simulated//Rel_no_optimized_'+ fitness
-    elif (data_type == 'exp') & (opt == True):
-        data_file =  'experimental//Rel_optimized_'+ fitness
-    elif (data_type == 'sim') & (opt == True):
-        data_file =  'simulated//Rel_optimized_'+ fitness  
+    if (data_type == 1) & (opt == False):
+        data_file =  'data_set_1//Rel_no_optimized_'+ fitness
+    elif (data_type == 2) & (opt == False):
+        data_file =  'data_set_2//Rel_no_optimized_'+ fitness
+    elif (data_type == 1) & (opt == True):
+        data_file =  'data_set_1//Rel_optimized_'+ fitness
+    elif (data_type == 2) & (opt == True):
+        data_file =  'data_set_2//Rel_optimized_'+ fitness  
     else:
         raise ValueError("Select an appropiate data_type: exp or sim and an appropiate opt: True or False")
     for run in range(n_runs):
