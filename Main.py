@@ -8,7 +8,7 @@ from optimization_algorithm.OptimizationAlgorithm import OptAlg
 from evaluation.EvalOpt import Eval
 #from plot.PlotsLib import FigureElipse
 
-OptAlg()
-#Eval()
+#OptAlg()
+Eval()
 
 
