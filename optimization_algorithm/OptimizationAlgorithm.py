@@ -332,7 +332,7 @@ def OptAlg():
 
     # Load of Parameters of the algorithm
     config = read_config()
-    data_type = config.get('parameters','data_type')
+    data_type = config.getint('parameters','data_type')
     n_gen = config.getint('parameters', 'n_gen')
     mutation_rate = config.getfloat('parameters', 'mutation_rate')
     pob_size = config.getint('parameters', 'pob_size')
@@ -398,9 +398,9 @@ def OptAlg():
 
         # Save the initial population as a file
         if data_type == 1:
-            population_file =  'optimization_algorithm//no_opt_results//experimental//initial_population_'+ fitness + '_run_' + str(run)
+            population_file =  'optimization_algorithm//no_opt_results//data_set_1//initial_population_'+ fitness + '_run_' + str(run)
         elif data_type == 2:
-            population_file =  'optimization_algorithm//no_opt_results//simulated//initial_population_'+ fitness + '_run_' + str(run)
+            population_file =  'optimization_algorithm//no_opt_results//data_set_2//initial_population_'+ fitness + '_run_' + str(run)
         else:
             raise ValueError("Select an appropiate data_type: 1 or 2")
         np.savetxt(population_file, population, delimiter=",")
@@ -449,9 +449,9 @@ def OptAlg():
         
         # Save optimized population as a file
         if data_type == 1:
-            population_file =  'optimization_algorithm//opt_results//experimental//population_optimized_'+ fitness + '_run_' + str(run)
+            population_file =  'optimization_algorithm//opt_results//data_set_1//population_optimized_'+ fitness + '_run_' + str(run)
         elif data_type == 2:
-            population_file =  'optimization_algorithm//opt_results//simulated//population_optimized_'+ fitness + '_run_' + str(run)
+            population_file =  'optimization_algorithm//opt_results//data_set_2//population_optimized_'+ fitness + '_run_' + str(run)
         else:
             raise ValueError("Select an appropiate data_type: 1 or 2")
         np.savetxt(population_file, population, delimiter=",")

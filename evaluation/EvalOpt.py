@@ -39,7 +39,7 @@ def CalculoMCF(input_file,t_MCF,t_meas,n_meas,n_ttos):
                     I_max = I
                 elif I < I_min:
                     I_min = I 
-            MCF[tran,meas] = I_max - I_min
+            MCF[tran,meas] = float(I_max) - float(I_min)
     return MCF
 
 def Comparison(MCF,n_meas,n_ttos,comp_offset):
@@ -188,7 +188,7 @@ def Eval():
 
     # Load of Parameters of the algorithm
     config = read_config()
-    data_type = config.get('parameters','data_type')
+    data_type = config.getint('parameters','data_type')
     opt = config.getboolean('parameters','opt')
     n_runs = config.getint('parameters', 'n_runs')
     t_MCF_20 = config.getfloat('parameters', 't_MCF_20')
@@ -211,12 +211,12 @@ def Eval():
     # Calculation of the MCF
     MCF_allT = np.empty((n_ttos,0))
     for i in range(len(T)):
-        if data_type == 'exp':
-            input_file_T = 'data/experimental/data_' + str(T[i]) +'.txt'
-        elif data_type == 'sim':
-            input_file_T = 'simulation/data/data_simulated_' + str(T[i])
+        if data_type == 1:
+            input_file_T = 'data/data_set_1/data_' + str(T[i]) +'.txt'
+        elif data_type == 2:
+            input_file_T = 'data/data_set_2/data_2_' + str(T[i])
         else:
-            raise ValueError("Select an appropiate data_type: exp or sim")
+            raise ValueError("Select an appropiate data_type: 1 or 2")
         if t_MCF_adp == True:
             t_MCF = t_MCF_20*np.exp(Ea_adp/k_b*(1/T[i] - 1/T[2]))
             t_meas = t_meas_20*np.exp(Ea_adp/k_b*(1/T[i] - 1/T[2]))
@@ -233,31 +233,31 @@ def Eval():
     # Evaluation of the optimized populations
     for run in range(n_runs):
         os.chdir('C:\\Users\\Usuario\\Desktop\\GARTNPUF\\optimization_algorithm')
-        if (data_type == 'exp') & (opt == False):
-            population_file =  'no_opt_results//experimental//initial_population_'+ fitness + '_run_' + str(run)
-        elif (data_type == 'sim') & (opt == False):
-            population_file =  'no_opt_results//simulated//initial_population_'+ fitness + '_run_' + str(run)
-        elif (data_type == 'exp') & (opt == True):
-            population_file =  'opt_results//experimental//population_optimized_'+ fitness + '_run_' + str(run)
-        elif (data_type == 'sim') & (opt == True):
-            population_file =  'opt_results//simulated//population_optimized_'+ fitness + '_run_' + str(run)    
+        if (data_type == 1) & (opt == False):
+            population_file =  'no_opt_results//data_set_1//initial_population_'+ fitness + '_run_' + str(run)
+        elif (data_type == 2) & (opt == False):
+            population_file =  'no_opt_results//data_set_2//initial_population_'+ fitness + '_run_' + str(run)
+        elif (data_type == 1) & (opt == True):
+            population_file =  'opt_results//data_set_1//population_optimized_'+ fitness + '_run_' + str(run)
+        elif (data_type == 2) & (opt == True):
+            population_file =  'opt_results//data_set_2//population_optimized_'+ fitness + '_run_' + str(run)    
         else:
-            raise ValueError("Select an appropiate data_type: exp or sim and an appropiate opt: True or False")
+            raise ValueError("Select an appropiate data_type: 1 or 2 and an appropiate opt: True or False")
         population = np.genfromtxt(population_file, delimiter=',')
         NSP,Rel,P_mean,prob,HW,GR = ParejasEval_HW(population, parejas_eval, n_meas, P ='all')
         NSP_mean,NSP_max,NSP_min,NSP_std,Rel_mean,Rel_std,P_mean,HW_mean,HDinter = Average_HW(NSP, Rel, P_mean,prob, HW, GR)
         data = np.concatenate((NSP_mean[:,None],NSP_std[:,None],Rel_mean[:,None],Rel_std[:,None],HW_mean[:,None],HDinter[:,None]),axis=1)
         os.chdir('C:\\Users\\Usuario\\Desktop\\GARTNPUF\\evaluation\\')
-        if (data_type == 'exp') & (opt == False):
-            output_file = 'experimental//Rel_no_optimized_'+ fitness +'_run_' + str(run)
-        elif (data_type == 'sim') & (opt == False):
-            output_file = 'simulated//Rel_no_optimized_'+ fitness +'_run_' + str(run)
-        elif (data_type == 'exp') & (opt == True):
-            output_file =  'experimental//Rel_optimized_'+ fitness +'_run_' + str(run)
-        elif (data_type == 'sim') & (opt == True):
-            output_file =  'simulated//Rel_optimized_'+ fitness +'_run_' + str(run)       
+        if (data_type == 1) & (opt == False):
+            output_file = 'data_set_1//Rel_no_optimized_'+ fitness +'_run_' + str(run)
+        elif (data_type == 2) & (opt == False):
+            output_file = 'data_set_2//Rel_no_optimized_'+ fitness +'_run_' + str(run)
+        elif (data_type == 1) & (opt == True):
+            output_file =  'data_set_1//Rel_optimized_'+ fitness +'_run_' + str(run)
+        elif (data_type == 2) & (opt == True):
+            output_file =  'data_set_2//Rel_optimized_'+ fitness +'_run_' + str(run)       
         else:
-            raise ValueError("Select an appropiate data_type: exp or sim and an appropiate opt: True or False")
+            raise ValueError("Select an appropiate data_type: 1 or 2 and an appropiate opt: True or False")
         np.savetxt(output_file, data, delimiter=",")
     # Averaging between different runs
     average_data = AverageRun(n_runs,data_type,opt,fitness)
