@@ -1,6 +1,6 @@
 # Ignorar datos
-data/
-simulation/
+data
+simulation
 evaluation/results
 optimization_algorithm/no_opt_results
 optimization_algorithm/opt_results
