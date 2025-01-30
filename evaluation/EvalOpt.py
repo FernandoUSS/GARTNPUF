@@ -81,7 +81,7 @@ def Evaluation(data_Comp,n_meas,n_ttos):
     sorted_parejas_eval = parejas_eval[sorted_index]
     return parejas_eval,sorted_parejas_eval
 
-def ParejasEval_HW(parejas,parejas_eval,n_meas,P):
+def ParejasEval_HW(parejas,parejas_eval,n_meas,P,dic_parejas):
     """ Function to obtain the number of stable pairs (NSP) vs the probability P_0 """
     n_imp = parejas.shape[0]
     n_pairs = int(parejas.shape[1]/2)
@@ -105,7 +105,8 @@ def ParejasEval_HW(parejas,parejas_eval,n_meas,P):
             if pareja[0]>pareja[1]:
                 pareja[0],pareja[1] = pareja[1],pareja[0]
                 GR_change = True
-            index_pair = aux[int(pareja[0]-1)] + (pareja[1]-pareja[0]) - 1
+            index_pair = dic_parejas[int(pareja[0])][int(pareja[1])]
+            #index_pair = aux[int(pareja[0]-1)] + (pareja[1]-pareja[0]) - 1
             pairs_eval[pair,:] = parejas_eval[int(index_pair),:]
             if GR_change == True:
                 pairs_eval[pair,2] = 1 - parejas_eval[int(index_pair),2]
@@ -244,7 +245,7 @@ def Eval():
         else:
             raise ValueError("Select an appropiate data_type: 1 or 2 and an appropiate opt: True or False")
         population = np.genfromtxt(population_file, delimiter=',')
-        NSP,Rel,P_mean,prob,HW,GR = ParejasEval_HW(population, parejas_eval, n_meas, P ='all')
+        NSP,Rel,P_mean,prob,HW,GR = ParejasEval_HW(population, parejas_eval, n_meas, P ='all', dic_parejas = dic_parejas)
         NSP_mean,NSP_max,NSP_min,NSP_std,Rel_mean,Rel_std,P_mean,HW_mean,HDinter = Average_HW(NSP, Rel, P_mean,prob, HW, GR)
         data = np.concatenate((NSP_mean[:,None],NSP_std[:,None],Rel_mean[:,None],Rel_std[:,None],HW_mean[:,None],HDinter[:,None]),axis=1)
         os.chdir('C:\\Users\\Usuario\\Desktop\\GARTNPUF\\evaluation\\')
