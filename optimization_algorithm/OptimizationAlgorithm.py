@@ -44,8 +44,9 @@ def Comparison(MCF,n_meas,n_ttos,comp_offset):
     data_Comp = np.full((total_n_pairs,n_meas),np.nan)
     dif_MCF_pair = np.full((total_n_pairs,n_meas),np.nan)
     for j in range(1, n_ttos + 1):
+        dic_parejas[j] = {}
         for k in range(j + 1, n_ttos + 1):
-            dic_parejas[i] = [j,k]
+            dic_parejas[j][k] = i
             MCF_pair = MCF[[j-1,k-1],:]
             dif_MCF_pair[i,:]  = MCF_pair[1,:] - MCF_pair[0,:]
             #data_Comp[i,:] = np.copy(dif_MCF_pair[i,:])
@@ -68,8 +69,8 @@ def Evaluation(data_Comp,n_meas,n_ttos):
             p = (n_meas-num_ones)/n_meas
             GR = 0
         else:
-            p = 0.5
-            GR = 0.5
+            p = 0 # 0.5
+            GR = np.random.choice([0, 1])
         parejas_eval[i,:] = [i,p,GR]
     sorted_index = np.argsort(parejas_eval[:, 1])
     sorted_index = sorted_index[::-1]
@@ -92,7 +93,7 @@ def RandomPairsGen(n_imp,n_pairs,n_ttos):
             del ttos[index]
     return parejas
 
-def ParejasEval(parejas,parejas_eval,n_ttos,n_meas,P,fitness):
+def ParejasEval(parejas,parejas_eval,n_ttos,n_meas,P,fitness,dic_parejas):
     """ Function to obtain the number of stable pairs (NSP) vs the probability P_0 """
     n_imp = parejas.shape[0]
     n_pairs = int(parejas.shape[1]/2)
@@ -105,7 +106,7 @@ def ParejasEval(parejas,parejas_eval,n_ttos,n_meas,P,fitness):
     HW = np.zeros((n_imp,len(prob)))
     Rel_all = np.zeros(n_imp)
     pairs_eval = np.zeros((n_pairs,3))
-    lista = np.concatenate((np.array(range(1,int(n_ttos))),[0]))
+    lista = np.concatenate((np.array(range(1,int(2*n_pairs))),[0]))
     aux = np.cumsum(lista[::-1])
     for imp in range(n_imp):
         parejas_imp = parejas[imp,:]
@@ -115,12 +116,13 @@ def ParejasEval(parejas,parejas_eval,n_ttos,n_meas,P,fitness):
             if pareja[0]>pareja[1]:
                 pareja[0],pareja[1] = pareja[1],pareja[0]
                 GR_change = True
-            index_pair = aux[int(pareja[0]-1)] + (pareja[1]-pareja[0]) - 1
+            index_pair = dic_parejas[int(pareja[0])][int(pareja[1])]
+            #index_pair = aux[int(pareja[0]-1)] + (pareja[1]-pareja[0]) - 1
             pairs_eval[pair,[0,1]] = parejas_eval[int(index_pair),[0,1]]
             if GR_change == True:
-                pairs_eval[pair,2] = 1 - parejas_eval[int(index_pair),2]
+                pairs_eval[pair,2] = 1 - parejas_eval[int(index_pair),2] # HW
             else:
-                pairs_eval[pair,2] =  parejas_eval[int(index_pair),2]
+                pairs_eval[pair,2] =  parejas_eval[int(index_pair),2] # HW
         for k in range(len(prob)):
             P_0 = prob[k]
             stable_pairs = pairs_eval[:, 1] >= P_0
@@ -220,7 +222,7 @@ def ParentSelection(metric_parejas,parejas,n_ttos,n_meas,n_offspring,rank):
         ind_ordenados = np.argsort(metric_unique_sol)
         ind_max_unique = ind_ordenados[-300:]
         pos = np.array(list(range(len(ind_max_unique))))
-        prob_sel = 1 - np.exp(-pos/n_comb)
+        prob_sel = 1 - np.exp(-(pos+1)/n_comb)
         normalized_metric = prob_sel/np.sum(prob_sel)
         cdf_metric = np.cumsum(normalized_metric)
         ind_par_unique = np.empty(n_par)
@@ -406,7 +408,7 @@ def OptAlg():
         np.savetxt(population_file, population, delimiter=",")
 
         # Evaluation of the initial population
-        fitness_population,NSP,Rel,Rel_all,prob,HW = ParejasEval(population,parejas_eval,n_ttos,n_meas, P, fitness)
+        fitness_population,NSP,Rel,Rel_all,prob,HW = ParejasEval(population,parejas_eval,n_ttos,n_meas, P, fitness,dic_parejas)
         print('Thi initial HW of the population is ' + str(np.nanmean(HW)))
         
         # Optimization loop
@@ -421,7 +423,7 @@ def OptAlg():
 
             # Offspring evaluation
             #fitness_offspring,NSP,Rel,P_mean_offspring,P_mean = ParejasEval_v2(MCF_allT,offspring,n_ttos,n_meas,P,fitness)
-            fitness_offspring,NSP,Rel,Rel_all,prob,HW = ParejasEval(offspring,parejas_eval,n_ttos,n_meas, P, fitness)
+            fitness_offspring,NSP,Rel,Rel_all,prob,HW = ParejasEval(offspring,parejas_eval,n_ttos,n_meas, P, fitness,dic_parejas)
             
             # Survivor Selection
             fitness_all = np.concatenate((fitness_offspring,fitness_population),axis=0)                     # Fitness function for population + offspring
@@ -441,7 +443,7 @@ def OptAlg():
                         count = count + 1
                     else:
                         count = 0
-                if count == stop_limit:
+                if count == stop_limit or new_ave_fit == 1.0:
                     break
 
         fin = time.time()
