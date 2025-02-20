@@ -1,11 +1,16 @@
 # Ignorar datos
-data
+#data
 simulation
 evaluation/results
+evaluation/data_1
+evaluation/data_2
+evaluation/data_3
+evaluation/data_4
 evaluation/__pycache__
 optimization/__pycache__
 optimization_algorithm/no_opt_results
 optimization_algorithm/opt_results
+optimization_algorithm/pair_selection
 __pycache__
 
 # Ignorar logs
