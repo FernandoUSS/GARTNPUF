@@ -21,15 +21,18 @@ effects = ['aging','thermal','electrical','all']
 for data in [1,2,3,4]:
     file_path = 'C:\\Users\\Usuario\\Desktop\\GARTNPUF\\' + file_path_array[data-1]
     df = pd.read_excel(file_path, sheet_name=sheet_name, engine='openpyxl')
+    data_currents_fresh = df[['T0']].to_numpy()
     data_currents_aging = df[['T0', 'T1']].to_numpy()
     data_currents_thermal = df[['T1', 'T2']].to_numpy()
     data_currents_electrical = df[['T2', 'T3']].to_numpy()
     data_currents_all = df[['T0','T1','T2','T3']].to_numpy()
 
+    n_meas_fresh = 1
     n_meas = 2
     n_meas_all = 4
     n_ttos = data_currents_aging.shape[0]
-    comp_offset = 0
+    comp_offset = 0.5*1e-6
+    comp_offset_fresh = 0.5*1e-6
     n_pairs = 37
 
     # Optimization Algorithm parameters
@@ -47,7 +50,10 @@ for data in [1,2,3,4]:
     
     n_runs = 25
     pob_size = 100
-        
+    
+    comp_fresh,dif_fresh,_ =  Comparison(data_currents_fresh,n_meas_fresh,n_ttos,comp_offset)    
+    parejas_eval_fresh,sorted_parejas_eval = Evaluation(comp_aging,n_meas,n_ttos)
+
     comp_aging,dif_aging,dic_parejas = Comparison(data_currents_aging,n_meas,n_ttos,comp_offset)
     parejas_eval_aging,sorted_parejas_eval = Evaluation(comp_aging,n_meas,n_ttos)
 
