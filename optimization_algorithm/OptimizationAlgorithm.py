@@ -51,9 +51,9 @@ def Comparison(MCF,n_meas,n_ttos,comp_offset):
             dif_MCF_pair[i,:]  = MCF_pair[1,:] - MCF_pair[0,:]
             #data_Comp[i,:] = np.copy(dif_MCF_pair[i,:])
             i = i + 1
-    data_Comp[dif_MCF_pair < -comp_offset] = 0        
-    data_Comp[dif_MCF_pair > comp_offset] = 1
-    data_Comp[(data_Comp != 1) & (data_Comp != 0)] = np.random.choice([0, 1], size=np.count_nonzero((data_Comp != 1) & (data_Comp != 0)))
+    data_Comp[dif_MCF_pair < comp_offset] = 0   # Offset towards 0
+    data_Comp[dif_MCF_pair >= comp_offset] = 1
+    #data_Comp[(data_Comp != 1) & (data_Comp != 0)] = np.random.choice([0, 1], size=np.count_nonzero((data_Comp != 1) & (data_Comp != 0)))
     return data_Comp,dif_MCF_pair,dic_parejas
 
 def Evaluation(data_Comp,n_meas,n_ttos):

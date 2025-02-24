@@ -52,7 +52,7 @@ for i in range(4):
     ax.set_yticklabels([])
     ax.set_yticks([])
     ax.set_ylabel('')
-    ax.text(0.025, 0.975, f'({chr(97 + i)}) ' + titles[i] + f'\n $\mu$: {mean:.2f} $\mu$A \n$\sigma$: {std:.2f} $\mu$A', transform=ax.transAxes, 
+    ax.text(0.025, 0.975, f'({chr(97 + i)}) ' + titles[i] + f'\n $\mu$: {mean:.1f} $\mu$A \n$\sigma$: {std:.1f} $\mu$A', transform=ax.transAxes, 
             verticalalignment='top', horizontalalignment='left', size = 7)
 plt.tight_layout()
 plt.savefig('figures\\fresh_devices_histograms.pdf')
