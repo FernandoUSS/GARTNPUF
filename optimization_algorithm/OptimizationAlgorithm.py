@@ -39,13 +39,13 @@ def CalculoMCF(input_file,t_MCF,t_meas,n_meas,n_ttos):
 def Comparison(MCF,n_meas,n_ttos,comp_offset):
     """ This function evaluate the comparison of the transistor MCF """
     dic_parejas = {}
-    total_n_pairs = int(comb(n_ttos,2))
+    total_n_pairs = n_ttos**2
     i = 0
     data_Comp = np.full((total_n_pairs,n_meas),np.nan)
     dif_MCF_pair = np.full((total_n_pairs,n_meas),np.nan)
     for j in range(1, n_ttos + 1):
         dic_parejas[j] = {}
-        for k in range(j + 1, n_ttos + 1):
+        for k in range(1, n_ttos + 1):
             dic_parejas[j][k] = i
             MCF_pair = MCF[[j-1,k-1],:]
             dif_MCF_pair[i,:]  = MCF_pair[1,:] - MCF_pair[0,:]
@@ -76,6 +76,34 @@ def Evaluation(data_Comp,n_meas,n_ttos):
     sorted_index = sorted_index[::-1]
     sorted_parejas_eval = parejas_eval[sorted_index]
     return parejas_eval,sorted_parejas_eval
+
+def Evaluation_OTFT(data_Comp,n_meas,n_ttos,dic_parejas):
+    """ Evaluation of the stability in the pairs response """
+    total_n_pairs = n_ttos**2
+    parejas_eval = np.zeros((total_n_pairs,3))
+    for i in range(total_n_pairs):
+        GR = data_Comp[i,0] # 0 or 1 according to the fresh value
+        num_ones = np.count_nonzero(data_Comp[i,:])
+        if n_meas == 1:
+           bitflips = 0 
+        elif n_meas == 2:
+            if GR == data_Comp[i,1]:
+                bitflips = 0
+            else:
+                bitflips = 1
+        else:
+            if num_ones > n_meas/2:
+                p = num_ones/n_meas
+                GR = 1
+            elif num_ones < n_meas/2:
+                p = (n_meas-num_ones)/n_meas
+                GR = 0
+            else:
+                p = 0
+                GR = np.random.choice([0, 1])
+            bitflips = np.count_nonzero(data_Comp[i,:] != GR)
+        parejas_eval[i,:] = [i,bitflips,GR]
+    return parejas_eval
 
 def RandomPairsGen(n_imp,n_pairs,n_ttos):
     """ Function to generate random pairs """
@@ -144,6 +172,26 @@ def ParejasEval(parejas,parejas_eval,n_ttos,n_meas,P,fitness,dic_parejas):
     else:
         raise ValueError("Not a valid fitness function")
     return fitness,NSP,Rel,Rel_all,prob,HW
+
+def ParejasEval_OTFT(parejas,parejas_eval,dic_parejas):
+    """ Function to obtain the number of stable pairs (NSP) vs the probability P_0 """
+    n_imp = parejas.shape[0]
+    n_pairs = int(parejas.shape[1]/2)
+    HD_intra = np.zeros((n_imp,))
+    HW = np.zeros((n_imp,))
+    GR = np.zeros((n_imp,n_pairs))
+    pairs_eval = np.zeros((n_pairs,3))
+    for imp in range(n_imp):
+        parejas_imp = parejas[imp,:]
+        for pair in range(n_pairs):
+            pareja = parejas_imp[[int(2*pair),int(2*pair +1)]]
+            index_pair = dic_parejas[int(pareja[0])][int(pareja[1])]
+            pairs_eval[pair,:] = parejas_eval[int(index_pair),:]
+            GR[imp,pair] = pairs_eval[pair,2]
+        HD_intra[imp] = np.mean(pairs_eval[:,1])
+        HW[imp] = np.mean(pairs_eval[:,2])
+        fitness = 1 - HD_intra
+    return fitness, HD_intra, HW, GR
 
 def ParejasEval_v2(MCF,population,n_ttos,n_meas,P,fitness):
     n_pairs = int(population.shape[1]/2)

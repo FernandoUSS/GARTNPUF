@@ -56,5 +56,26 @@ for i in range(4):
             verticalalignment='top', horizontalalignment='left', size = 7)
 plt.tight_layout()
 plt.savefig('figures\\fresh_devices_histograms.pdf')
-plt.show()
+#plt.show()
+
+file_path = 'C:\\Users\\Usuario\\Desktop\\GARTNPUF\\data\\Datos Gráfica.xlsx'
+sheet_name = 'Hoja1'
+df = pd.read_excel(file_path, sheet_name=sheet_name, engine='openpyxl')
+data_gateV = df['GateV'].to_numpy()
+data_drainI = df[['IDVBG0V','IDVGB5V','IDVBG10V','IDVBG15V']].to_numpy()
+
+## Figure for fresh devices: IV curves
+fig, axs = plt.subplots(figsize=(3.5,2.5))
+for i in range(4):
+    ax = axs
+    ax.plot(data_gateV, -data_drainI[:,i]*1e6, label=r'$V_{BG}$ = '+ str(int(5*i)) +' V')
+ax.set_xlabel(r'Top Gate Voltage, $V_{TG}$ (V)')
+ax.set_ylabel(r'Drain Current, $I_D$ ($\mu$ A)')
+ax.legend(loc='upper left')
+ax.grid(True)
+ax.set_xlim(10, -30)  # Flip the x-axis and set limits
+plt.tight_layout()
+plt.savefig('figures\\fresh_devices_IV_curves.pdf')
+#plt.show()
+
 print('Hello World')

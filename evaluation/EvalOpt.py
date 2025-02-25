@@ -155,6 +155,26 @@ def Average_HW(NSP,Rel,P_mean,prob,HW,GR):
     HDinter =  HDinter*np.ones(len(prob),)
     return NSP_mean,NSP_max,NSP_min,NSP_std,Rel_mean,Rel_std,P_mean,HW_mean,HDinter
 
+def Average_OTFT(HD_intra,HW,GR):
+    n_imp = HD_intra.shape[0]
+    n_pairs = GR.shape[1]
+    HD_intra_mean = np.mean(HD_intra,axis = 0)
+    HD_intra_std = np.std(HD_intra,axis = 0)
+    HW_mean = np.nanmean(HW,axis = 0)
+    HW_std = np.nanstd(HW,axis = 0)
+    Rel_mean = 1 - HD_intra_mean
+    Rel_std = HD_intra_std
+    # Evaluation HDinter
+    k = n_imp
+    total_distance = 0
+    pair_count = 0
+    for i in range(k - 1):
+        for j in range(i + 1, k):
+            total_distance += np.sum(GR[i,:] != GR[j,:])
+            pair_count += n_pairs
+    HDinter = total_distance/pair_count
+    return Rel_mean, Rel_std, HD_intra_mean,HD_intra_std,HW_mean,HW_std,HDinter
+
 def AverageRun(n_runs,data_type,opt,fitness):
     if (data_type == 1) & (opt == False):
         data_file =  'data_set_1//Rel_no_optimized_'+ fitness
