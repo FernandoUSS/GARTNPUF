@@ -10,15 +10,16 @@ from optimization_algorithm.OptimizationAlgorithm import Comparison, Evaluation_
 from evaluation.EvalOpt import Eval, Average_OTFT, ParejasEval_HW
 import configparser
 
-file_path_1 = 'data\\Taula 1 - IDVD LIN BACKWARD +5V.xlsx' #LB
-file_path_2 = 'data\\Taula 2 - IDVD SAT BACKWARD +5V.xlsx' #SB
-file_path_3 = 'data\\Taula 3 - IDVG SAT IV1 FORWARD -20V.xlsx' #SF
-file_path_4 = 'data\\Taula 4 - IDVG LIN IV1 FORWARD -18V.xlsx' #LF
+file_path_1 = 'data/Taula 1 - IDVD LIN BACKWARD +5V.xlsx' #LB
+file_path_2 = 'data/Taula 2 - IDVD SAT BACKWARD +5V.xlsx' #SB
+file_path_3 = 'data/Taula 3 - IDVG SAT IV1 FORWARD -20V.xlsx' #SF
+file_path_4 = 'data/Taula 4 - IDVG LIN IV1 FORWARD -18V.xlsx' #LF
 file_path_array = [file_path_1,file_path_2,file_path_3,file_path_4]
 sheet_name = 'Hoja1'
 effects = ['aging','thermal','electrical','all']
 
 main_directory = 'C:\\Users\\Usuario\\Desktop\\GARTNPUF\\'
+main_directory = '/mnt/cnm/fernando/GARTNPUF/'
 os.chdir(main_directory)
 
 for data in [1,2,3,4]:
@@ -41,7 +42,7 @@ for data in [1,2,3,4]:
     n_pairs = 37
 
     # Optimization Algorithm parameters
-    os.chdir(main_directory + 'optimization_algorithm\\')
+    os.chdir(main_directory + 'optimization_algorithm/')
     config = read_config()
     n_gen = config.getint('parameters', 'n_gen')
     mutation_rate = config.getfloat('parameters', 'mutation_rate')
@@ -52,7 +53,7 @@ for data in [1,2,3,4]:
     stop_limit = config.getint('parameters', 'stop_limit')
     P = config.getfloat('parameters', 'P')
     
-    n_runs = 0
+    n_runs = 10
     pob_size = 1000
     
     comp_fresh,dif_fresh,dic_parejas =  Comparison(data_currents_fresh,n_meas_fresh,n_ttos, comp_offset_fresh)    
@@ -72,13 +73,13 @@ for data in [1,2,3,4]:
     _,_,_,_,HW_mean_stressed,HW_std_stressed,HDinter_stressed = Average_OTFT(HD_intra_stressed, HW_stressed, GR_stressed)
     
     data_1 = np.array([HW_mean_fresh,HW_std_fresh,HDinter_fresh])
-    output_file ='data_' + str(data) + '\\fresh\\HW_fresh_offset_' + str(comp_offset_fresh)
-    os.chdir(main_directory + 'evaluation\\')
+    output_file ='data_' + str(data) + '/fresh/HW_fresh_offset_' + str(comp_offset_fresh)
+    os.chdir(main_directory + 'evaluation/')
     np.savetxt(output_file, data_1, delimiter=",")
     
     data_1 = np.array([HW_mean_stressed,HW_std_stressed,HDinter_stressed])
-    output_file ='data_' + str(data) + '\\stressed\\HW_stressed_offset_' + str(comp_offset_stressed)
-    os.chdir(main_directory + 'evaluation\\')
+    output_file ='data_' + str(data) + '/stressed/HW_stressed_offset_' + str(comp_offset_stressed)
+    os.chdir(main_directory + 'evaluation/')
     np.savetxt(output_file, data_1, delimiter=",")
     
     comp_aging,dif_aging,dic_parejas = Comparison(data_currents_aging,n_meas,n_ttos,comp_offset)
@@ -121,7 +122,7 @@ for data in [1,2,3,4]:
             # population = np.tile(population_data[0:37, :].reshape(1, 74), (pob_size, 1)) + 1
             
             # Save the initial population as a file
-            population_file =  'optimization_algorithm//no_opt_results//data_'+ str(data) + '//' + effect +'//no_opt_population_run_' + str(run)
+            population_file =  'optimization_algorithm/no_opt_results/data_'+ str(data) + '/' + effect +'/no_opt_population_run_' + str(run)
             np.savetxt(population_file, population, delimiter=",",fmt='%d')
 
             # Evaluation of the initial population
@@ -167,7 +168,7 @@ for data in [1,2,3,4]:
             print("The run of the optimization took " +  str(fin - inicio) + " seconds")
             
             # Save optimized population as a file
-            population_file =  'optimization_algorithm//opt_results//data_'+ str(data) + '//' + effect +'//opt_population_run_' + str(run)
+            population_file =  'optimization_algorithm/opt_results/data_'+ str(data) + '/' + effect +'/opt_population_run_' + str(run)
             np.savetxt(population_file, population, delimiter=",",fmt='%d')
 
         # Evaluation of the optimized populations
@@ -177,17 +178,17 @@ for data in [1,2,3,4]:
             lista[:,0] = range(1,n_ttos+1)
             population_from_lista = np.zeros((n_runs,n_ttos))
             for run in range(n_runs):
-                os.chdir(main_directory + 'optimization_algorithm\\')
-                population_file =   optimization + '_results//data_' + str(data) + '//' + effect +'\\'+ optimization +'_population_run_' + str(run)
+                os.chdir(main_directory + 'optimization_algorithm/')
+                population_file =   optimization + '_results/data_' + str(data) + '/' + effect +'/'+ optimization +'_population_run_' + str(run)
                 population = np.genfromtxt(population_file, delimiter=',')
                 
                 _, HD_intra, HW, GR = ParejasEval_OTFT(population, parejas_eval, dic_parejas)
                 Rel_mean, Rel_std, HD_intra_mean,HD_intra_std,HW_mean,HW_std,HDinter = Average_OTFT(HD_intra, HW, GR)
                 data_1 = np.array([Rel_mean, Rel_std, HD_intra_mean, HD_intra_std,HW_mean,HW_std,HDinter])
             
-                os.chdir(main_directory + 'evaluation\\')
+                os.chdir(main_directory + 'evaluation/')
                 
-                output_file ='data_' + str(data) + '//' + effect +'\\Rel_'+ optimization + '_offset_' + str(comp_offset) + '_run_' + str(run) 
+                output_file ='data_' + str(data) + '/' + effect +'/Rel_'+ optimization + '_offset_' + str(comp_offset) + '_run_' + str(run) 
                 np.savetxt(output_file, data_1, delimiter=",")
                 
             #    for j in range(n_pairs):
@@ -228,8 +229,8 @@ for data in [1,2,3,4]:
             #jaccard_index_mean = np.mean(jaccard_values)
             #jaccard_index_std = np.std(jaccard_values)
             #np.savetxt('data_' + str(data) +'//' + effect +'\\jaccard_index_'+ optimization, np.array([jaccard_index_mean, jaccard_index_std]), delimiter=",")
-            os.chdir(main_directory + 'evaluation\\')
-            data_file =  'data_' + str(data) +'//' + effect +'\\Rel_'+ optimization + '_offset_' + str(comp_offset)
+            os.chdir(main_directory + 'evaluation/')
+            data_file =  'data_' + str(data) +'/' + effect +'/Rel_'+ optimization + '_offset_' + str(comp_offset)
             for run in range(n_runs):
                 data_run = data_file + '_run_' + str(run)
                 data_1 = np.loadtxt(data_run,delimiter=",")
@@ -237,15 +238,15 @@ for data in [1,2,3,4]:
                     average_data = data_1
                 else:
                     average_data = average_data + data_1
-            #average_data = average_data/n_runs
-            #np.savetxt(data_file,average_data,delimiter=",")
+            average_data = average_data/n_runs
+            np.savetxt(data_file,average_data,delimiter=",")
 
 # Create a summary table for HW and HD_inter values of the fresh data
-os.chdir(main_directory + 'evaluation\\')
+os.chdir(main_directory + 'evaluation/')
 summary_data = np.zeros((2, len(file_path_array)))
 summary_data_std = np.zeros((2, len(file_path_array)))
 for j in range(len(file_path_array)):
-    data_file = 'data_' + str(j+1) + '\\fresh\\HW_fresh' + '_offset_' + str(comp_offset_fresh)
+    data_file = 'data_' + str(j+1) + '/fresh/HW_fresh' + '_offset_' + str(comp_offset_fresh)
     data_1 = np.loadtxt(data_file, delimiter=",")
     summary_data[0, j] = data_1[0]
     summary_data_std[0, j] = data_1[1]  
@@ -262,11 +263,11 @@ with open(table_file, 'w') as f:
     f.write(latex_table)
 
 # Create a summary table for HW and HD_inter values of the fresh data
-os.chdir(main_directory + 'evaluation\\')
+os.chdir(main_directory + 'evaluation/')
 summary_data = np.zeros((2, len(file_path_array)))
 summary_data_std = np.zeros((2, len(file_path_array)))
 for j in range(len(file_path_array)):
-    data_file = 'data_' + str(j+1) + '\\stressed\\HW_stressed' + '_offset_' + str(comp_offset_stressed)
+    data_file = 'data_' + str(j+1) + '/stressed/HW_stressed' + '_offset_' + str(comp_offset_stressed)
     data_1 = np.loadtxt(data_file, delimiter=",")
     summary_data[0, j] = data_1[0]
     summary_data_std[0, j] = data_1[1]  
@@ -283,12 +284,12 @@ with open(table_file, 'w') as f:
     f.write(latex_table)
           
 # Create a summary table for Rel_all values
-os.chdir(main_directory + 'evaluation\\')
+os.chdir(main_directory + 'evaluation/')
 summary_data = np.zeros((len(effects), len(file_path_array)))
 summary_data_std = np.zeros((len(effects), len(file_path_array)))
 for i, effect in enumerate(effects):
     for j in range(len(file_path_array)):
-        data_file = 'data_' + str(j+1) + '//' + effect + '\\Rel_opt' +  '_offset_' + str(comp_offset)
+        data_file = 'data_' + str(j+1) + '/' + effect + '/Rel_opt' +  '_offset_' + str(comp_offset)
         data_1 = np.loadtxt(data_file, delimiter=",")
         summary_data[i, j] = data_1[0]  
         summary_data_std[i, j] = data_1[1] 
@@ -304,12 +305,12 @@ with open(table_file, 'w') as f:
     f.write(latex_table)
 
 # Create a summary table for Rel_all values
-os.chdir(main_directory + 'evaluation\\')
+os.chdir(main_directory + 'evaluation/')
 summary_data = np.zeros((len(effects), len(file_path_array)))
 summary_data_std = np.zeros((len(effects), len(file_path_array)))
 for i, effect in enumerate(effects):
     for j in range(len(file_path_array)):
-        data_file = 'data_' + str(j+1) + '//' + effect + '\\Rel_no_opt' + '_offset_' + str(comp_offset)
+        data_file = 'data_' + str(j+1) + '/' + effect + '/Rel_no_opt' + '_offset_' + str(comp_offset)
         data_1 = np.loadtxt(data_file, delimiter=",")
         summary_data[i, j] = data_1[0]
         summary_data_std[i, j] = data_1[1]
