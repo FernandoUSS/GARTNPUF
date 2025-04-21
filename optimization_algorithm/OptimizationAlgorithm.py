@@ -102,7 +102,10 @@ def Evaluation_OTFT(data_Comp,n_meas,n_ttos,dic_parejas):
                 p = 0
                 GR = np.random.choice([0, 1])
             bitflips = np.count_nonzero(data_Comp[i,:] != GR)
-        parejas_eval[i,:] = [i,bitflips,GR]
+        if n_meas == 1:
+            parejas_eval[i,:] = [i,bitflips,GR]
+        else:
+            parejas_eval[i,:] = [i,bitflips/(n_meas-1),GR]
     return parejas_eval
 
 def RandomPairsGen(n_imp,n_pairs,n_ttos):
@@ -190,7 +193,7 @@ def ParejasEval_OTFT(parejas,parejas_eval,dic_parejas):
             GR[imp,pair] = pairs_eval[pair,2]
         HD_intra[imp] = np.mean(pairs_eval[:,1])
         HW[imp] = np.mean(pairs_eval[:,2])
-        fitness = 1 - HD_intra
+        fitness = 0.5*(1 - np.abs(0.5 - HW)) + 0.5*(1 - HD_intra)
     return fitness, HD_intra, HW, GR
 
 def ParejasEval_v2(MCF,population,n_ttos,n_meas,P,fitness):

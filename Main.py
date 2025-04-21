@@ -25,6 +25,7 @@ for data in [1,2,3,4]:
     file_path = main_directory + file_path_array[data-1]
     df = pd.read_excel(file_path, sheet_name=sheet_name, engine='openpyxl')
     data_currents_fresh = df[['T0']].to_numpy()
+    data_currents_stressed = df[['T1']].to_numpy()
     data_currents_aging = df[['T0', 'T1']].to_numpy()
     data_currents_thermal = df[['T1', 'T2']].to_numpy()
     data_currents_electrical = df[['T2', 'T3']].to_numpy()
@@ -34,8 +35,9 @@ for data in [1,2,3,4]:
     n_meas = 2
     n_meas_all = 4
     n_ttos = data_currents_aging.shape[0]
-    comp_offset = 0
-    comp_offset_fresh = 0.5
+    comp_offset = 0.6
+    comp_offset_fresh = 0.6
+    comp_offset_stressed = 0.6
     n_pairs = 37
 
     # Optimization Algorithm parameters
@@ -50,18 +52,32 @@ for data in [1,2,3,4]:
     stop_limit = config.getint('parameters', 'stop_limit')
     P = config.getfloat('parameters', 'P')
     
-    n_runs = 10
-    pob_size = 250
+    n_runs = 0
+    pob_size = 1000
     
     comp_fresh,dif_fresh,dic_parejas =  Comparison(data_currents_fresh,n_meas_fresh,n_ttos, comp_offset_fresh)    
     parejas_eval_fresh = Evaluation_OTFT(comp_fresh,n_meas_fresh,n_ttos,dic_parejas)
     
-    population = RandomPairsGen(pob_size,n_pairs,n_ttos)
-    fitness_population_fresh,HD_intra_fresh,HW_fresh,GR_fresh = ParejasEval_OTFT(population,parejas_eval_fresh,dic_parejas)
-    _,_,_,_,HW_mean,HW_std,HDinter = Average_OTFT(HD_intra_fresh, HW_fresh, GR_fresh)
+    comp_stressed,dif_stressed,dic_parejas =  Comparison(data_currents_stressed,n_meas_fresh,n_ttos, comp_offset_stressed)    
+    parejas_eval_stressed = Evaluation_OTFT(comp_stressed,n_meas_fresh,n_ttos,dic_parejas)
     
-    data_1 = np.array([HW_mean,HW_std,HDinter])
+    population = RandomPairsGen(pob_size,n_pairs,n_ttos)
+    
+    fitness_population_fresh,HD_intra_fresh,HW_fresh,GR_fresh = ParejasEval_OTFT(population,parejas_eval_fresh,dic_parejas)
+    _,_,_,_,HW_mean_fresh,HW_std_fresh,HDinter_fresh = Average_OTFT(HD_intra_fresh, HW_fresh, GR_fresh)
+    
+    population = RandomPairsGen(pob_size,n_pairs,n_ttos)
+    
+    fitness_population_stressed,HD_intra_stressed,HW_stressed,GR_stressed = ParejasEval_OTFT(population,parejas_eval_stressed,dic_parejas)
+    _,_,_,_,HW_mean_stressed,HW_std_stressed,HDinter_stressed = Average_OTFT(HD_intra_stressed, HW_stressed, GR_stressed)
+    
+    data_1 = np.array([HW_mean_fresh,HW_std_fresh,HDinter_fresh])
     output_file ='data_' + str(data) + '\\fresh\\HW_fresh_offset_' + str(comp_offset_fresh)
+    os.chdir(main_directory + 'evaluation\\')
+    np.savetxt(output_file, data_1, delimiter=",")
+    
+    data_1 = np.array([HW_mean_stressed,HW_std_stressed,HDinter_stressed])
+    output_file ='data_' + str(data) + '\\stressed\\HW_stressed_offset_' + str(comp_offset_stressed)
     os.chdir(main_directory + 'evaluation\\')
     np.savetxt(output_file, data_1, delimiter=",")
     
@@ -77,7 +93,7 @@ for data in [1,2,3,4]:
     comp_all,dif_all,dic_parejas = Comparison(data_currents_all,n_meas_all,n_ttos,comp_offset)
     parejas_eval_all = Evaluation_OTFT(comp_all,n_meas_all,n_ttos,dic_parejas)
     
-    effects = ['aging','thermal','electrical','all']
+    effects = ['aging', 'thermal', 'electrical', 'all']
     for effect in effects:
         if effect == 'all':
             parejas_eval = parejas_eval_all
@@ -134,7 +150,7 @@ for data in [1,2,3,4]:
                 # Write data_GA and console display
                 new_ave_fit= np.mean(fitness_population)
                 data_GA[gen,:] = np.array([gen,new_ave_fit])
-                print('In the generation ' + str(gen) + ' the average HD_intra of the population is ' + str(new_ave_fit))
+                print('In the generation ' + str(gen) + ' the average HD_intra of the population is ' + str(np.nanmean(HD_intra)))
                 print('In the generation ' + str(gen) + ' the average HW of the population is ' + str(np.nanmean(HW)))
 
                 # Stopping criteria
@@ -212,7 +228,6 @@ for data in [1,2,3,4]:
             #jaccard_index_mean = np.mean(jaccard_values)
             #jaccard_index_std = np.std(jaccard_values)
             #np.savetxt('data_' + str(data) +'//' + effect +'\\jaccard_index_'+ optimization, np.array([jaccard_index_mean, jaccard_index_std]), delimiter=",")
-            
             os.chdir(main_directory + 'evaluation\\')
             data_file =  'data_' + str(data) +'//' + effect +'\\Rel_'+ optimization + '_offset_' + str(comp_offset)
             for run in range(n_runs):
@@ -222,8 +237,8 @@ for data in [1,2,3,4]:
                     average_data = data_1
                 else:
                     average_data = average_data + data_1
-            average_data = average_data/n_runs
-            np.savetxt(data_file,average_data,delimiter=",")
+            #average_data = average_data/n_runs
+            #np.savetxt(data_file,average_data,delimiter=",")
 
 # Create a summary table for HW and HD_inter values of the fresh data
 os.chdir(main_directory + 'evaluation\\')
@@ -245,7 +260,28 @@ latex_table += "\\hline\n\\end{tabular}"
 table_file = 'table_fresh_offset_' + str(comp_offset_fresh) + '.tex'
 with open(table_file, 'w') as f:
     f.write(latex_table)
-        
+
+# Create a summary table for HW and HD_inter values of the fresh data
+os.chdir(main_directory + 'evaluation\\')
+summary_data = np.zeros((2, len(file_path_array)))
+summary_data_std = np.zeros((2, len(file_path_array)))
+for j in range(len(file_path_array)):
+    data_file = 'data_' + str(j+1) + '\\stressed\\HW_stressed' + '_offset_' + str(comp_offset_stressed)
+    data_1 = np.loadtxt(data_file, delimiter=",")
+    summary_data[0, j] = data_1[0]
+    summary_data_std[0, j] = data_1[1]  
+    summary_data[1, j] = data_1[2]
+
+# Generate LaTeX table for summary data
+header = " & " + " & ".join(["LB", "SB", "SF", "LF"])
+latex_table = "\\begin{tabular}{c " + "c " * len(file_path_array) + "}\n\\hline\n" + header + " \\\\\n\\hline\n"
+latex_table += "$HW$ & " + " & ".join([f"{summary_data[0, j]:.2f} $\\pm$ {summary_data_std[0, j]:.2f}" for j in range(len(file_path_array))]) + " \\\\\n"
+latex_table += "$HD_{inter}$ & " + " & ".join([f"{summary_data[1, j]:.2f} $\\pm$ {summary_data_std[0, j]:.2f}" for j in range(len(file_path_array))]) + " \\\\\n"
+latex_table += "\\hline\n\\end{tabular}"
+table_file = 'table_stressed_offset_' + str(comp_offset_stressed) + '.tex'
+with open(table_file, 'w') as f:
+    f.write(latex_table)
+          
 # Create a summary table for Rel_all values
 os.chdir(main_directory + 'evaluation\\')
 summary_data = np.zeros((len(effects), len(file_path_array)))

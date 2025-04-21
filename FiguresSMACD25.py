@@ -9,7 +9,8 @@ from scipy.stats import norm
 plt.style.use('ieee')
 plt.rcParams['font.family'] = 'sans-serif'
 
-main_directory = 'C:\\Users\\bysho\\OneDrive\\Escritorio\\Fernando\\Trabajo\\Reliability\\GARTNPUF\\'
+#main_directory = 'C:\\Users\\bysho\\OneDrive\\Escritorio\\Fernando\\Trabajo\\Reliability\\GARTNPUF\\'
+main_directory = 'C:\\Users\\Usuario\\Desktop\\GARTNPUF\\'
 file_path_1 = 'data\\Taula 1 - IDVD LIN BACKWARD +5V.xlsx'
 file_path_2 = 'data\\Taula 2 - IDVD SAT BACKWARD +5V.xlsx'
 file_path_3 = 'data\\Taula 3 - IDVG SAT IV1 FORWARD -20V.xlsx'
@@ -108,43 +109,79 @@ for i in range(4):
     data_thermal = data_currents_thermal[:,i]
     data_electrical = data_currents_electrical[:,i]
 
-    ax.scatter(data_fresh, data_fresh-data_aging, color='r', label='Aging')
-    ax.scatter(data_aging, data_aging-data_thermal, color='g', label='Thermal')
-    ax.scatter(data_thermal, data_thermal-data_electrical, color='y', label='Electrical')
-
+    ax.scatter(data_fresh, data_fresh-data_aging, color='r', edgecolor='black', label='Off time', s=10, alpha=0.6, linewidths=0.3)
+    ax.scatter(data_aging, data_aging-data_thermal, color='g', edgecolor='black', label='Thermal', s=10, alpha=0.6, linewidths=0.3, marker='^')
+    ax.scatter(data_thermal, data_thermal-data_electrical, color='y', edgecolor='black', label='Bias stress', s=10, alpha=0.6, linewidths=0.3, marker='s')
+    
+    ax.grid(True, alpha=0.3)  # Make the grid transparent
     if i//2 == 1:
-        ax.set_xlabel(r'Initial Current ($\mu$A)')
+        ax.set_xlabel(r'Initial Current, $I_{in}$ ($\mu$A)')
     if i%2 == 0:
-        ax.set_ylabel(r'Current Shift ($\mu$A)')
+        ax.set_ylabel(r'Current Shift, $\Delta I$ ($\mu$A)')
     ax.text(0.025, 0.975, f'({chr(97 + i)}) ' + titles[i] , transform=ax.transAxes, 
             verticalalignment='top', horizontalalignment='left', size = 7)
 
 # Create a unique legend outside the axis
 handles, labels = axs[0,0].get_legend_handles_labels()
-fig.legend(handles, labels, loc='upper center', ncol=3, bbox_to_anchor=(0.5, 1.05))
+fig.legend(handles, labels, loc='upper center', ncol=3, bbox_to_anchor=(0.5, 1.075))
 
 plt.tight_layout()
-plt.savefig('figures\\aged_devices_scatter.pdf')
+plt.savefig('figures\\aged_devices_scatter.pdf', bbox_inches='tight')
 #plt.show()
     
-# file_path = 'C:\\Users\\Usuario\\Desktop\\GARTNPUF\\data\\Datos Gráfica.xlsx'
-# sheet_name = 'Hoja1'
-# df = pd.read_excel(file_path, sheet_name=sheet_name, engine='openpyxl')
-# data_gateV = df['GateV'].to_numpy()
-# data_drainI = df[['IDVBG0V','IDVGB5V','IDVBG10V','IDVBG15V']].to_numpy()
+file_path = 'C:\\Users\\Usuario\\Desktop\\GARTNPUF\\data\\IdVdlin4.xlsx'
+sheet_name = 'Sheet1'
+df = pd.read_excel(file_path, sheet_name=sheet_name, engine='openpyxl')
+data_drainI_lin = df['DrainI'].to_numpy()
+data_drainV_lin = df[['DrainV']].to_numpy()
 
-# ## Figure for fresh devices: IV curves
-# fig, axs = plt.subplots(figsize=(3.5,2.5))
-# for i in range(4):
-#     ax = axs
-#     ax.plot(data_gateV, -data_drainI[:,i]*1e6, label=r'$V_{BG}$ = '+ str(int(5*i)) +' V')
-# ax.set_xlabel(r'Top Gate Voltage, $V_{TG}$ (V)')
-# ax.set_ylabel(r'Drain Current, $I_D$ ($\mu$ A)')
-# ax.legend(loc='upper left')
-# ax.grid(True)
-# ax.set_xlim(10, -30)  # Flip the x-axis and set limits
-# plt.tight_layout()
-# plt.savefig('figures\\fresh_devices_IV_curves.pdf')
-#plt.show()
+file_path = 'C:\\Users\\Usuario\\Desktop\\GARTNPUF\\data\\IdVdsat4.xlsx'
+sheet_name = 'Sheet1'
+df = pd.read_excel(file_path, sheet_name=sheet_name, engine='openpyxl')
+data_drainI_sat = df['DrainI'].to_numpy()
+data_drainV_sat = df[['DrainV']].to_numpy()
+
+file_path = 'C:\\Users\\Usuario\\Desktop\\GARTNPUF\\data\\IdVglin4.xlsx'
+sheet_name = 'Sheet1'
+df = pd.read_excel(file_path, sheet_name=sheet_name, engine='openpyxl')
+data_drainI_lin_1 = df['DrainI'].to_numpy()
+data_gateV_lin = df[['GateV']].to_numpy()
+
+file_path = 'C:\\Users\\Usuario\\Desktop\\GARTNPUF\\data\\IdVgsat4.xlsx'
+sheet_name = 'Sheet1'
+df = pd.read_excel(file_path, sheet_name=sheet_name, engine='openpyxl')
+data_drainI_sat_1 = df['DrainI'].to_numpy()
+data_gateV_sat = df[['GateV']].to_numpy()
+
+## Figure for fresh devices: IV curves
+fig, axs = plt.subplots(1,2,figsize=(3.5,2.5))
+
+axs[0].plot(data_drainV_lin, data_drainI_lin*1e6, 'b-', label=r'$V_{TG}$ = -20 V') 
+axs[0].plot(data_drainV_sat, data_drainI_sat*1e6, 'r--', label=r'$V_{TG}$ = -6 V')
+axs[0].scatter(data_drainV_lin[0], data_drainI_lin[0]*1e6, color='b', s=20, alpha=1, linewidths=0.3)
+axs[0].scatter(data_drainV_sat[0], data_drainI_sat[0]*1e6, color='r', s=20, alpha=1, linewidths=0.3)
+axs[0].text(data_drainV_lin[0] - 1, data_drainI_lin[0]*1e6 + 2, 'LB', fontsize=8, verticalalignment='top', horizontalalignment='right')
+axs[0].text(data_drainV_sat[0], data_drainI_sat[0]*1e6, 'SB', fontsize=8, verticalalignment='bottom', horizontalalignment='right')
+
+axs[1].plot(data_gateV_lin, data_drainI_lin_1*1e6, 'g-.', label=r'$V_{D}$ = -1 V') 
+axs[1].plot(data_gateV_sat, data_drainI_sat_1*1e6, 'm:', label=r'$V_{D}$ = -15 V')
+axs[1].scatter(data_gateV_lin[231], data_drainI_lin_1[231]*1e6, color='g', s=20, alpha=1, linewidths=0.3)
+axs[1].scatter(data_gateV_sat[-1], data_drainI_sat_1[-1]*1e6, color='m', s=20, alpha=1, linewidths=0.3)
+axs[1].text(data_gateV_lin[231], data_drainI_lin_1[231]*1e6 + 1, 'LF', fontsize=8, verticalalignment='bottom', horizontalalignment='left')
+axs[1].text(data_gateV_sat[-1] + 1, data_drainI_sat_1[-1]*1e6 + 2, 'SF', fontsize=8, verticalalignment='top', horizontalalignment='left')
+
+axs[0].set_xlabel(r'Drain Voltage, $V_{D}$ (V)')
+axs[1].set_xlabel(r'Top-Gate Voltage, $V_{TG}$ (V)')
+axs[0].set_ylabel(r'Drain Current, $I_D$ ($\mu$ A)')
+axs[1].set_yticks([0, -10, -20, -30])
+axs[0].legend(loc='upper left', fontsize='small', bbox_to_anchor=(0, 0.9))
+axs[1].legend(loc='lower right', fontsize='small', bbox_to_anchor=(1, 0.1))
+axs[0].grid(True)
+axs[1].grid(True)
+#axs[0].set_xlim(10, -30)  # Flip the x-axis and set limits
+
+plt.tight_layout()
+plt.savefig('figures\\devices_IV_curves.pdf')
+plt.show()
 
 print('Hello World')
